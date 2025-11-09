@@ -80,8 +80,8 @@ jobs:
 
       - name: Build and push Docker image with Podman
         run: |
-          podman build -t ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest .
-          podman push ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest docker://docker.io/${{ secrets.      DOCKERHUB_USERNAME }}/github-runner-riscv:latest
+          sudo podman build -t ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest .
+          sudo podman push ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest docker://docker.io/${{ secrets.      DOCKERHUB_USERNAME }}/github-runner-riscv:latest
 
 
       - name: Save the latest tag as built
