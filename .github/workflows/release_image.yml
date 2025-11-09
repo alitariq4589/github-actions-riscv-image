@@ -86,9 +86,9 @@ jobs:
           export BUILDAH_ISOLATION=chroot
           export _CONTAINERS_USERNS_CONFIGURED=""
           export PODMAN_SYSTEMD_UNIT=
-          podman build -t ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest .
-          podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          podman push ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest docker://docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest
+          sudo podman build -t ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest .
+          sudo podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+          sudo podman push ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest docker://docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest
 
 
 
