@@ -1,5 +1,5 @@
 FROM docker.io/riscv64/debian:trixie
-RUN apt-get update && apt-get install -y curl git ca-certificates libicu-dev sudo
+RUN apt-get update && apt-get install -y curl git ca-certificates libicu-dev sudo libatomic1 git gawk jq
 WORKDIR /home/runner
 
 # Download GitHub runner (replace URL with the latest for your architecture)
