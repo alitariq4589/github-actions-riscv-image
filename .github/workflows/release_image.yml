@@ -78,15 +78,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
-        if: steps.compare.outputs.should_build == 'true'
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:${{ steps.get_latest.outputs.latest_tag }}
+      - name: Build and push Docker image with Podman
+        run: |
+          podman build -t ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest .
+          podman push ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest docker://docker.io/${{ secrets.      DOCKERHUB_USERNAME }}/github-runner-riscv:latest
+
 
       - name: Save the latest tag as built
         if: steps.compare.outputs.should_build == 'true'
