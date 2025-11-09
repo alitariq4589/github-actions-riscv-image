@@ -13,4 +13,11 @@ if [[ ! -f ".runner" ]]; then
     --replace
 fi
 
-exec ./bin/Runner.Listener run
+while true; do
+  echo "Starting GitHub runner via run.sh..."
+  ./run.sh
+
+  # If run.sh exits (e.g., job finished or crash), wait and restart
+  echo "Runner stopped. Restarting in 3 seconds..."
+  sleep 3
+done
