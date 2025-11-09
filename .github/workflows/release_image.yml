@@ -83,7 +83,7 @@ jobs:
         run: |
           sudo podman build -t ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest .
           sudo podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          sudo podman push ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest docker://docker.io/${{ secrets.     DOCKERHUB_USERNAME }}/github-runner-riscv:latest
+          sudo podman push ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest docker://docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest
 
 
 
