@@ -21,7 +21,7 @@ jobs:
       - name: Get latest release tag from github-runner-riscv
         id: get_latest
         run: |
-          LATEST_TAG=$(gh release list --repo alitariq4589/github-runner-riscv --limit 1 | awk '{print $1}')
+          LATEST_TAG=$(curl -s https://api.github.com/repos/alitariq4589/github-runner-riscv/releases/latest | jq -r .tag_name)
           echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
           echo "Latest release tag is: $LATEST_TAG"
         env:
