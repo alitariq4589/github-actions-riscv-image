@@ -67,9 +67,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Docker Buildx
-        if: steps.compare.outputs.should_build == 'true'
-        uses: docker/setup-buildx-action@v3
+      # - name: Set up Docker Buildx
+        # if: steps.compare.outputs.should_build == 'true'
+        # uses: docker/setup-buildx-action@v3
 
       - name: Log in to DockerHub
         if: steps.compare.outputs.should_build == 'true'
