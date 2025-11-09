@@ -14,7 +14,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y gh wget gawk git 
+          sudo apt-get install -y gh wget gawk git libatomic1 jq
       - name: Checkout this repository
         uses: actions/checkout@v4
 
