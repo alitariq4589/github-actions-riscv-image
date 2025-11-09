@@ -81,12 +81,11 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image with Podman
-        if: steps.compare.outputs.should_build == 'true'
         run: |
-          #!/bin/bash
-          set -exu
-          sudo podman system migrate
-
+          set -ex
+          export BUILDAH_ISOLATION=chroot
+          export _CONTAINERS_USERNS_CONFIGURED=""
+          export PODMAN_SYSTEMD_UNIT=
           podman build -t ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest .
           podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
           podman push ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest docker://docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest
