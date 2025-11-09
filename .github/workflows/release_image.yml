@@ -85,7 +85,7 @@ jobs:
         run: |
           #!/bin/bash
           set -exu
-          podman system migrate
+          # podman system migrate
 
           podman build -t ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest .
           podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
