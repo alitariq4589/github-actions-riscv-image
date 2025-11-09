@@ -1,5 +1,7 @@
 name: Auto Build and Publish on New Release
 
+permissions:
+  contents: write
 on:
   schedule:
     - cron: "0 6 * * *"   # every day at 6 AM UTC
@@ -81,10 +83,10 @@ jobs:
       - name: Build and push Docker image with Podman
         if: steps.compare.outputs.should_build == 'true'
         run: |
-          sudo usermod --add-subuids 100000-165536 runneruser
-          sudo usermod --add-subgids 100000-165536 runneruser
-          sudo podman system migrate
-          
+          #!/bin/bash
+          set -exu
+          podman system migrate
+
           sudo podman build -t ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest .
           sudo podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
           sudo podman push ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest docker://docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest
@@ -94,9 +96,22 @@ jobs:
       - name: Save the latest tag as built
         if: steps.compare.outputs.should_build == 'true'
         run: |
-          echo "${{ steps.get_latest.outputs.latest_tag }}" > .last_built_tag
+          LATEST_TAG=${{ steps.get_latest.outputs.latest_tag }}
+
+          echo "$LATEST_TAG" > .last_built_tag
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .last_built_tag
-          git commit -m "CI: record built release ${{ steps.get_latest.outputs.latest_tag }}"
-          git push
+
+          # Commit only if file changed
+          if git diff --quiet .last_built_tag; then
+            echo "✅ No changes in .last_built_tag — skipping commit."
+          else
+            git add .last_built_tag
+            git commit -m "CI: record built release $LATEST_TAG"
+            echo "🆕 Committed updated .last_built_tag"
+          fi
+
+          # Push changes
+          echo "🚀 Pushing to origin..."
+          git push origin HEAD:main
