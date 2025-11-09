@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+
 if [[ ! -f ".runner" ]]; then
   if [[ -z "$GITHUB_REPO" || -z "$RUNNER_TOKEN" ]]; then
     echo "Missing GITHUB_REPO or RUNNER_TOKEN"
@@ -10,5 +11,6 @@ if [[ ! -f ".runner" ]]; then
     --token "${RUNNER_TOKEN}" \
     --unattended \
     --replace
-  fi
-  ./run.sh
+fi
+
+exec ./bin/Runner.Listener run

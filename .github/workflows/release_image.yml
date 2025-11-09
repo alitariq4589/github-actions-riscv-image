@@ -7,9 +7,14 @@ on:
 
 jobs:
   check-and-build:
-    runs-on: ubuntu-latest
+    runs-on: RISCV64
 
     steps:
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gh wget awk git 
       - name: Checkout this repository
         uses: actions/checkout@v4
 
