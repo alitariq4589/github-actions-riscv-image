@@ -62,6 +62,7 @@ jobs:
         if: steps.compare.outputs.should_build == 'true'
         run: |
           mkdir release && cd release
+          echo "Fetching release version v${{ steps.get_latest.outputs.latest_version }}_riscv assets..."
           wget https://github.com/alitariq4589/github-runner-riscv/releases/download/v${{ steps.get_latest.outputs.latest_version }}_riscv/actions-runner-linux-riscv64-${{ steps.get_latest.outputs.latest_version }}.tar.gz
           ls -lh
         env:
@@ -79,6 +80,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image with Podman
+        if: steps.compare.outputs.should_build == 'true'
         run: |
           set -ex
           export BUILDAH_ISOLATION=chroot
