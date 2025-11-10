@@ -63,7 +63,7 @@ jobs:
         run: |
           mkdir release && cd release
           echo "Fetching release version v${{ steps.get_latest.outputs.latest_version }}_riscv assets..."
-          wget https://github.com/alitariq4589/github-runner-riscv/releases/download/v${{ steps.get_latest.outputs.latest_version }}_riscv/actions-runner-linux-riscv64-${{ steps.get_latest.outputs.latest_version }}.tar.gz
+          wget -q https://github.com/alitariq4589/github-runner-riscv/releases/download/v${{ steps.get_latest.outputs.latest_version }}_riscv/actions-runner-linux-riscv64-${{ steps.get_latest.outputs.latest_version }}.tar.gz
           ls -lh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
