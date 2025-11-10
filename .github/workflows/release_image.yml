@@ -23,18 +23,18 @@ jobs:
       - name: Get latest release tag from github-runner-riscv
         id: get_latest
         run: |
-          LATEST_TAG=$(curl -s https://api.github.com/repos/alitariq4589/github-runner-riscv/releases/latest | jq -r .tag_name)
-          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
-          echo "Latest release tag is: $LATEST_TAG"
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/alitariq4589/github-runner-riscv/releases/latest \| jq -r .tag_name | sed -E 's/^v([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          echo "latest_version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+          echo "Latest release tag is: $LATEST_VERSION"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Read last built tag (if any)
         id: read_last
         run: |
-          if [ -f .last_built_tag ]; then
-            echo "last_tag=$(cat .last_built_tag)" >> $GITHUB_OUTPUT
-            echo "Last built tag: $(cat .last_built_tag)"
+          if [ -f .last_built_version ]; then
+            echo "last_tag=$(cat .last_built_version)" >> $GITHUB_OUTPUT
+            echo "Last built tag: $(cat .last_built_version)"
           else
             echo "last_tag=" >> $GITHUB_OUTPUT
             echo "No previous build record found"
@@ -43,7 +43,7 @@ jobs:
       - name: Check if new release exists
         id: compare
         run: |
-          if [ "${{ steps.get_latest.outputs.latest_tag }}" = "${{ steps.read_last.outputs.last_tag }}" ]; then
+          if [ "${{ steps.get_latest.outputs.latest_version }}" = "${{ steps.read_last.outputs.last_tag }}" ]; then
             echo "No new release. Skipping build."
             echo "should_build=false" >> $GITHUB_OUTPUT
           else
@@ -62,9 +62,7 @@ jobs:
         if: steps.compare.outputs.should_build == 'true'
         run: |
           mkdir release && cd release
-          gh release download "${{ steps.get_latest.outputs.latest_tag }}" \
-            --repo alitariq4589/github-runner-riscv \
-            --pattern "*" --clobber
+          wget https://github.com/alitariq4589/github-runner-riscv/releases/download/v${{ steps.get_latest.outputs.latest_version }}_riscv/actions-runner-linux-riscv64-${{ steps.get_latest.outputs.latest_version }}.tar.gz
           ls -lh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -95,17 +93,17 @@ jobs:
       - name: Save the latest tag as built
         if: steps.compare.outputs.should_build == 'true'
         run: |
-          LATEST_TAG=${{ steps.get_latest.outputs.latest_tag }}
+          LATEST_VERSION=${{ steps.get_latest.outputs.latest_version }}
 
-          echo "$LATEST_TAG" > .last_built_tag
+          echo "$LATEST_VERSION" > .last_built_version
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add .last_built_tag
-          git commit -m "CI: record built release $LATEST_TAG"
+          git add .last_built_version
+          git commit -m "CI: record built release $LATEST_VERSION"
           
-          echo "🆕 Committed updated .last_built_tag"
+          echo "🆕 Committed updated .last_built_version"
 
           # Push changes
           echo "🚀 Pushing to origin..."
