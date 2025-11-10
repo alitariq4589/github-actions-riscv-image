@@ -23,7 +23,7 @@ jobs:
       - name: Get latest release tag from github-runner-riscv
         id: get_latest
         run: |
-          LATEST_VERSION=$(curl -s https://api.github.com/repos/alitariq4589/github-runner-riscv/releases/latest \| jq -r .tag_name | sed -E 's/^v([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/alitariq4589/github-runner-riscv/releases/latest | jq -r .tag_name | sed -E 's/^v([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
           echo "latest_version=$LATEST_VERSION" >> $GITHUB_OUTPUT
           echo "Latest release tag is: $LATEST_VERSION"
         env:
