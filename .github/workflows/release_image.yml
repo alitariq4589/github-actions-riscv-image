@@ -51,26 +51,6 @@ jobs:
             echo "should_build=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Stop if no new release
-        if: steps.compare.outputs.should_build == 'false'
-        run: |
-          echo "✅ Everything up to date — no build required."
-          exit 0
-
-      # --- Only runs when new release detected ---
-      - name: Download latest release assets
-        if: steps.compare.outputs.should_build == 'true'
-        run: |
-          mkdir release && cd release
-          echo "Fetching release version v${{ steps.get_latest.outputs.latest_version }}_riscv assets..."
-          wget -q https://github.com/alitariq4589/github-runner-riscv/releases/download/v${{ steps.get_latest.outputs.latest_version }}_riscv/actions-runner-linux-riscv64-${{ steps.get_latest.outputs.latest_version }}.tar.gz
-          ls -lh
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # - name: Set up Docker Buildx
-        # if: steps.compare.outputs.should_build == 'true'
-        # uses: docker/setup-buildx-action@v3
 
       - name: Log in to DockerHub
         if: steps.compare.outputs.should_build == 'true'
@@ -86,7 +66,7 @@ jobs:
           export BUILDAH_ISOLATION=chroot
           export _CONTAINERS_USERNS_CONFIGURED=""
           export PODMAN_SYSTEMD_UNIT=
-          sudo podman build -t ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest .
+          sudo podman build --build-arg RUNNER_VERSION=${{ steps.get_latest.outputs.latest_version }} -t ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest .
           sudo podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
           sudo podman push ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest docker://docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest
           sudo podman push ${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:latest docker://docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-runner-riscv:${{ steps.get_latest.outputs.latest_version }}

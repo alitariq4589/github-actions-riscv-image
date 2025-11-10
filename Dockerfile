@@ -2,9 +2,12 @@ FROM docker.io/riscv64/debian:trixie
 RUN apt-get update && apt-get install -y curl git ca-certificates libicu-dev sudo libatomic1 git gawk jq
 WORKDIR /home/runner
 
+ARG RUNNER_VERSION=2.328.0
+
 # Download GitHub runner (replace URL with the latest for your architecture)
-RUN curl -O -L https://github.com/alitariq4589/github-runner-riscv/releases/download/v2.328.0_riscv/actions-runner-linux-riscv64-2.328.0.tar.gz && \
-    tar xzf actions-runner-linux-riscv64-2.328.0.tar.gz && rm actions-runner-linux-riscv64-2.328.0.tar.gz
+RUN curl -O -L https://github.com/alitariq4589/github-runner-riscv/releases/download/v${RUNNER_VERSION}_riscv/actions-runner-linux-riscv64-${RUNNER_VERSION}.tar.gz && \
+    tar xzf actions-runner-linux-riscv64-${RUNNER_VERSION}.tar.gz && rm actions-runner-linux-riscv64-${RUNNER_VERSION}.tar.gz
+
 
     # Install dependencies for the runner (if any)
 RUN bash ./bin/installdependencies.sh
