@@ -5,22 +5,29 @@ WORKDIR /home/runner
 ARG RUNNER_VERSION=2.328.0
 
 # Download GitHub runner (replace URL with the latest for your architecture)
-RUN curl -O -L https://github.com/alitariq4589/github-runner-riscv/releases/download/v${RUNNER_VERSION}_riscv/actions-runner-linux-riscv64-${RUNNER_VERSION}.tar.gz && \
-    tar xzf actions-runner-linux-riscv64-${RUNNER_VERSION}.tar.gz && rm actions-runner-linux-riscv64-${RUNNER_VERSION}.tar.gz
+
+# Download
+RUN set -ex && curl -L -O https://github.com/alitariq4589/github-runner-riscv/releases/download/v${RUNNER_VERSION}_riscv/actions-runner-linux-riscv64-${RUNNER_VERSION}.tar.gz
+
+# Extract
+RUN set -ex && tar -xvzf actions-runner-linux-riscv64-${RUNNER_VERSION}.tar.gz
+
+# Cleanup
+RUN set -ex && rm actions-runner-linux-riscv64-${RUNNER_VERSION}.tar.gz
 
 
     # Install dependencies for the runner (if any)
-RUN bash ./bin/installdependencies.sh
+RUN set -ex bash ./bin/installdependencies.sh
 
 # Copy entrypoint script
 COPY entrypoint.sh .
-RUN chmod +x entrypoint.sh
+RUN set -ex chmod +x entrypoint.sh
 
 # Add a user which will run the github actions
-RUN useradd -m runneruser
-RUN chown -R runneruser:runneruser /home/runner
+RUN set -ex useradd -m runneruser
+RUN set -ex chown -R runneruser:runneruser /home/runner
 
 # Add runneruser to sudoers without password prompt
-RUN echo "runneruser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/runneruser
+RUN set -ex echo "runneruser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/runneruser
 USER runneruser
 ENTRYPOINT ["./entrypoint.sh"]
