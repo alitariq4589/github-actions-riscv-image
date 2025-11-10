@@ -102,14 +102,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Commit only if file changed
-          if git diff --quiet .last_built_tag; then
-            echo "✅ No changes in .last_built_tag — skipping commit."
-          else
-            git add .last_built_tag
-            git commit -m "CI: record built release $LATEST_TAG"
-            echo "🆕 Committed updated .last_built_tag"
-          fi
+          git add .last_built_tag
+          git commit -m "CI: record built release $LATEST_TAG"
+          
+          echo "🆕 Committed updated .last_built_tag"
 
           # Push changes
           echo "🚀 Pushing to origin..."
