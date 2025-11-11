@@ -28,6 +28,6 @@ RUN set -ex && useradd -m runneruser
 RUN set -ex && chown -R runneruser:runneruser /home/runner
 
 # Add runneruser to sudoers without password prompt
-RUN set -ex echo "runneruser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/runneruser
+RUN set -ex && echo "runneruser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/runneruser
 USER runneruser
 ENTRYPOINT ["./entrypoint.sh"]
