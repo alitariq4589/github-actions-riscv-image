@@ -1,5 +1,5 @@
 FROM docker.io/riscv64/debian:trixie
-RUN apt-get update && apt-get install -y curl git ca-certificates libicu-dev sudo libatomic1 git gawk jq
+RUN apt-get update && apt-get install -y curl git ca-certificates libicu-dev sudo libatomic1 gawk jq vim nano python3 python3-venv python3-pip python3-dev gcc g++ gfortran make build-essential autoconf automake libtool pkg-config cmake net-tools iproute2 openssh-client wget podman zip unzip tar gzip bzip2 xz-utils rsync bc htop less tree
 WORKDIR /home/runner
 
 ARG RUNNER_VERSION=2.328.0
