@@ -42,7 +42,7 @@ jobs:
           podman tag localhost/github-actions-riscv:${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:latest
           podman tag localhost/github-actions-riscv:${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:debian-${VERSION}
 
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | sudo podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
           podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:latest
           podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:debian-${VERSION}
       # 4. Tag repository with the same version
@@ -59,4 +59,4 @@ jobs:
           echo "Removing local images and any leftover containers..."
 
           # Remove all local images built for this runner
-          sudo podman images -q github-actions-riscv | xargs -r sudo podman rmi -f
+          podman images -q github-actions-riscv | xargs -r podman rmi -f
