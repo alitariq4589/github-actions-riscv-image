@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-runner:
-    runs-on: ubuntu-latest
+    runs-on: RISCV64
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
