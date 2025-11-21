@@ -1,0 +1,61 @@
+name: Build and Release Debian Github Actions Image
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-runner:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 1. Get numeric-only version (X.Y.Z)
+      - name: Get latest runner version
+        id: get_version
+        run: |
+          VERSION=$(curl -s https://api.github.com/repos/alitariq4589/github-runner-riscv/releases/latest \
+            | grep -oE '"tag_name":\s*"v?[^"]+' \
+            | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Using version: $VERSION"
+
+      # 2. Build Docker image with version ARG
+      - name: Build Docker Image
+        run: |
+          podman build \
+            --build-arg RUNNER_VERSION=${VERSION} \
+            -t github-actions-riscv:${VERSION} \
+            .
+
+      # 3. Push to Docker Hub
+      - name: Push Docker Image
+        run: |
+          sudo podman tag github-actions-riscv:${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:latest
+          sudo podman tag github-actions-riscv:${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:debian-${VERSION}
+
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | sudo podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+          sudo podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:latest
+          sudo podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:debian-${VERSION}
+      # 4. Tag repository with the same version
+      - name: Tag repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${VERSION}" -m "Release v${VERSION}"
+          git push origin "v${VERSION}"
+      
+      - name: Cleanup local images and containers
+        if: always()
+        run: |
+          echo "Removing local images and any leftover containers..."
+
+          # Remove all local images built for this runner
+          sudo podman images -q github-actions-riscv | xargs -r sudo podman rmi -f
