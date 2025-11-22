@@ -1,0 +1,36 @@
+FROM docker.io/riscv64/ubuntu:latest
+
+RUN apt-get update && apt-get install -y curl git ca-certificates libicu-dev sudo libatomic1 gawk jq vim nano python3 python3-venv python3-pip python3-dev gcc g++ gfortran make build-essential autoconf automake libtool pkg-config cmake net-tools iproute2 openssh-client wget podman zip unzip tar gzip bzip2 xz-utils rsync bc htop less tree
+
+RUN useradd -m -s /bin/bash runneruser
+
+WORKDIR /home/runneruser
+
+ARG RUNNER_VERSION=2.328.0
+
+# Download GitHub runner (replace URL with the latest for your architecture)
+
+# Download
+RUN curl -L -O https://github.com/alitariq4589/github-runner-riscv/releases/download/v${RUNNER_VERSION}_riscv/actions-runner-linux-riscv64-${RUNNER_VERSION}.tar.gz
+
+# Extract
+RUN tar -xvzf actions-runner-linux-riscv64-${RUNNER_VERSION}.tar.gz
+
+# Cleanup
+RUN rm actions-runner-linux-riscv64-${RUNNER_VERSION}.tar.gz
+
+
+    # Install dependencies for the runner (if any)
+RUN bash ./bin/installdependencies.sh
+
+# Copy entrypoint script
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
+
+# Add a user which will run the github actions
+RUN chown -R runneruser:runneruser /home/runneruser
+
+# Add runneruser to sudoers without password prompt
+RUN echo "runneruser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/runneruser
+USER runneruser
+ENTRYPOINT ["./entrypoint.sh"]

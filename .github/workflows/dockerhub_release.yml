@@ -1,4 +1,4 @@
-name: Build and Release Debian Github Actions Image
+name: Build and Release Github Actions Image
 
 permissions:
   contents: write
@@ -16,7 +16,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 1. Get numeric-only version (X.Y.Z)
       - name: Get latest runner version
         id: get_version
         run: |
@@ -27,23 +26,35 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Using version: $VERSION"
 
-      # 2. Build Docker image with version ARG
       - name: Build Docker Image
         run: |
+
+          echo "Building Docker image with Debian Trixie"
           podman build \
+            -f Dockerfile.debian \
             --build-arg RUNNER_VERSION=${VERSION} \
-            -t github-actions-riscv:${VERSION} \
+            -t github-actions-riscv:debian-${VERSION} \
             .
 
-      # 3. Push to Docker Hub
+          echo "Building Docker image with Ubuntu LTS"
+          podman build \
+            -f Dockerfile.ubuntu \
+            --build-arg RUNNER_VERSION=${VERSION} \
+            -t github-actions-riscv:ubuntu-${VERSION} \
+            .
+
       - name: Push Docker Image
         run: |
           
-          podman tag localhost/github-actions-riscv:${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:latest
-          podman tag localhost/github-actions-riscv:${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:debian-${VERSION}
+          # Tag ubuntu image as latest
+          podman tag localhost/github-actions-riscv:ubuntu-${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:latest
 
+          # Login to Docker Hub
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+          # Push all tags
           podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:latest
+          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:ubuntu-${VERSION}
           podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:debian-${VERSION}
       
       - name: Cleanup local images and containers
