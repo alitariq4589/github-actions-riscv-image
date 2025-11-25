@@ -8,6 +8,7 @@ if [[ ! -f ".runner" ]]; then
   ./config.sh \
     --url "${GITHUB_REPO}" \
     --token "${RUNNER_TOKEN}" \
+    --name "$(hostname)" \
     --unattended \
     --replace
   fi
