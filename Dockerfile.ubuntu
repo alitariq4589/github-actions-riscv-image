@@ -1,6 +1,6 @@
 FROM docker.io/riscv64/ubuntu:latest
 
-RUN apt-get update && apt-get install -y docker.io curl git ca-certificates libicu-dev sudo
+RUN apt-get update && apt-get install -y libatomic1 docker.io curl git ca-certificates libicu-dev sudo
 
 
 WORKDIR /home/runner
@@ -8,8 +8,8 @@ WORKDIR /home/runner
 
 
 # Download GitHub runner (replace URL with the latest for your architecture)
-RUN curl -O -L https://github.com/dkurt/github_actions_riscv/releases/download/v2.321.0/actions-runner-linux-riscv64-2.321.0.tar.gz && \
-    tar xzf actions-runner-linux-riscv64-2.321.0.tar.gz && rm actions-runner-linux-riscv64-2.321.0.tar.gz
+RUN curl -O -L https://github.com/alitariq4589/github-runner-riscv/releases/download/v2.329.0_riscv/actions-runner-linux-riscv64-2.329.0.tar.gz && \
+    tar xzf actions-runner-linux-riscv64-2.329.0.tar.gz && rm actions-runner-linux-riscv64-2.329.0.tar.gz
 
 # Install dependencies for the runner (if any)
 RUN bash ./bin/installdependencies.sh
