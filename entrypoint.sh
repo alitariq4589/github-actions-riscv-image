@@ -2,6 +2,9 @@
 
 set -e
 
+# Set runner name
+RUNNER_NAME="${RUNNER_NAME:-$(hostname)}"
+
 if [[ ! -f ".runner" ]]; then
   if [[ -z "$GITHUB_REPO" || -z "$RUNNER_TOKEN" ]]; then
     echo "Missing GITHUB_REPO or RUNNER_TOKEN"
@@ -11,6 +14,7 @@ if [[ ! -f ".runner" ]]; then
   ./config.sh \
     --url "${GITHUB_REPO}" \
     --token "${RUNNER_TOKEN}" \
+    --name "${RUNNER_NAME}" \
     --unattended \
     --replace
 fi
