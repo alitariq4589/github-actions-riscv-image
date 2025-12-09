@@ -57,6 +57,8 @@ jobs:
           # Push all tags
           podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:ubuntu-${VERSION}
           podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:debian-${VERSION}
+          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:latest
+          
       
       - name: Cleanup local images and containers
         if: always()
