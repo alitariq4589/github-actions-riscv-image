@@ -51,6 +51,8 @@ else
     echo "Docker commands will not work in this container"
 fi
 
+su - runneruser
+
 # --- GITHUB RUNNER CONFIGURATION ---
 # Set runner name
 RUNNER_NAME="${RUNNER_NAME:-$(hostname)}"
