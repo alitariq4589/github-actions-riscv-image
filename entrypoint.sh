@@ -70,5 +70,3 @@ if [[ ! -f ".runner" ]]; then
 fi
 
 ./run.sh
-
-# sudo apt update
