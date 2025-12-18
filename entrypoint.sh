@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -exu
 echo "=== GitHub Actions Runner Startup ==="
 
 # --- DYNAMIC DOCKER GID MATCHING ---
