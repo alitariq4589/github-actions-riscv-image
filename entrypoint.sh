@@ -1,6 +1,6 @@
 #!/bin/bash
+set -e
 
-set -exu
 echo "=== GitHub Actions Runner Startup ==="
 
 # --- DYNAMIC DOCKER GID MATCHING ---
@@ -51,24 +51,33 @@ else
     echo "Docker commands will not work in this container"
 fi
 
-su - runneruser
-
 # --- GITHUB RUNNER CONFIGURATION ---
 # Set runner name
 RUNNER_NAME="${RUNNER_NAME:-$(hostname)}"
 
-if [[ ! -f ".runner" ]]; then
-  if [[ -z "$GITHUB_REPO" || -z "$RUNNER_TOKEN" ]]; then
-    echo "Missing GITHUB_REPO or RUNNER_TOKEN"
-    exit 1
-  fi
+echo "Configuring runner as user: runneruser"
+cd /home/runner
 
-  ./config.sh \
-    --url "${GITHUB_REPO}" \
-    --token "${RUNNER_TOKEN}" \
-    --name "${RUNNER_NAME}" \
-    --unattended \
-    --replace
-fi
-
-./run.sh
+# Now switch to runneruser and run the entire configuration/startup as that user
+# Use exec to replace the shell process
+exec su - runneruser -c "
+    cd /home/runner
+    
+    if [[ ! -f .runner ]]; then
+        if [[ -z '$GITHUB_REPO' || -z '$RUNNER_TOKEN' ]]; then
+            echo 'Missing GITHUB_REPO or RUNNER_TOKEN'
+            exit 1
+        fi
+        
+        echo 'Registering runner: ${RUNNER_NAME}'
+        ./config.sh \
+            --url '${GITHUB_REPO}' \
+            --token '${RUNNER_TOKEN}' \
+            --name '${RUNNER_NAME}' \
+            --unattended \
+            --replace
+    fi
+    
+    echo 'Starting GitHub Actions runner...'
+    ./run.sh
+"
