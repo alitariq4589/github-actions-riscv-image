@@ -59,12 +59,12 @@ echo "Configuring runner as user: runneruser"
 cd /home/runner
 
 # Now switch to runneruser and run the entire configuration/startup as that user
-# Use exec to replace the shell process
-exec su - runneruser -c "
+# IMPORTANT: Explicitly use bash, not sh (which doesn't support [[)
+exec su - runneruser -c "/bin/bash <<'EOFSCRIPT'
     cd /home/runner
     
     if [[ ! -f .runner ]]; then
-        if [[ -z '$GITHUB_REPO' || -z '$RUNNER_TOKEN' ]]; then
+        if [[ -z '${GITHUB_REPO}' || -z '${RUNNER_TOKEN}' ]]; then
             echo 'Missing GITHUB_REPO or RUNNER_TOKEN'
             exit 1
         fi
@@ -80,4 +80,5 @@ exec su - runneruser -c "
     
     echo 'Starting GitHub Actions runner...'
     ./run.sh
+EOFSCRIPT
 "
