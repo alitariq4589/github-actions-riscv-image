@@ -70,3 +70,5 @@ jobs:
 
           # Remove all local images built for this runner
           podman images -q github-actions-riscv | xargs -r podman rmi -f
+
+          
