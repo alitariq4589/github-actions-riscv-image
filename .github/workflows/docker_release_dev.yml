@@ -49,8 +49,8 @@ jobs:
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
           # Push all tags
-          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:ubuntu-${VERSION}
-          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:latest
+          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-ubuntu-${VERSION}
+          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-latest
       - name: Build Debian Trixie Docker Image
         run: |
 
@@ -68,7 +68,7 @@ jobs:
           # Login to Docker Hub
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:debian-${VERSION}
+          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-debian-${VERSION}
           
       
       - name: Cleanup local images and containers
