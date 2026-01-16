@@ -46,7 +46,7 @@ jobs:
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
           # Push all tags
-          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:dev
+          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:latest-dev
           podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:ubuntu-${VERSION}-dev
       - name: Build Debian Trixie Docker Image
         run: |
