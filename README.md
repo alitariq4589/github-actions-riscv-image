@@ -34,5 +34,5 @@ docker run -d \
     -e RUNNER_NAME="$(hostname)-docker-runner" \
     -e DOCKER_ENABLED="true" \
     --name="$DOCKER_CONTAINER_NAME" \
-    docker.io/cloudv10x/github-actions-riscv:docker-ubuntu-latest
+    docker.io/cloudv10x/github-actions-riscv:docker-latest
 ```
