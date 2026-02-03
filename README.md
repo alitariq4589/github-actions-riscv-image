@@ -34,6 +34,7 @@ docker run -d \
     -e RUNNER_TOKEN="$REPO_TOKEN$" \
     -e RUNNER_NAME="$(hostname)-docker-runner" \
     -e DOCKER_ENABLED="true" \
+    -e RUNNER_LABELS="riscv64_runner" \
     --name="$CONTAINER_NAME" \
     docker.io/cloudv10x/github-actions-riscv:docker-latest
 ```
