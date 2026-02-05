@@ -6,61 +6,55 @@ permissions:
 on:
   push:
     branches:
-      - 2.329.0
+      - 2.331.0
   workflow_dispatch:
 
 jobs:
   build-runner:
     runs-on: RISCV64
+    env:
+      VERSION: 2.331.0
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Get latest runner version
-        id: get_version
+      - name: Build Ubuntu latest Docker Image
         run: |
-          VERSION="2.329.0"
-          #   VERSION=$(curl -s https://api.github.com/repos/alitariq4589/github-runner-riscv/releases/latest \
-          #     | grep -oE '"tag_name":\s*"v?[^"]+' \
-          #     | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
-
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "Using version: $VERSION"
-
-      - name: Build Docker Image
-        run: |
-
-          echo "Building Docker image with Debian Trixie"
-          podman build \
-            -f Dockerfile.debian \
-            --build-arg RUNNER_VERSION=${VERSION} \
-            -t github-actions-riscv:debian-${VERSION} \
-            .
 
           echo "Building Docker image with Ubuntu LTS"
           podman build \
             -f Dockerfile.ubuntu \
-            --build-arg RUNNER_VERSION=${VERSION} \
             -t github-actions-riscv:ubuntu-${VERSION} \
             .
-
-      - name: Push Docker Image
+        
+      - name: Push Ubuntu latest Docker Image
         run: |
           
-          # Tag ubuntu image as latest
-          podman tag localhost/github-actions-riscv:ubuntu-${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:ubuntu-${VERSION}
-
-          podman tag localhost/github-actions-riscv:debian-${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:debian-${VERSION}
-
-          podman tag localhost/github-actions-riscv:ubuntu-${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:latest
+          # Tag ubuntu image
+          podman tag localhost/github-actions-riscv:ubuntu-${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-ubuntu-${VERSION}
 
           # Login to Docker Hub
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
           # Push all tags
-          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:ubuntu-${VERSION}
-          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:debian-${VERSION}
-          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:latest
+          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-ubuntu-${VERSION}
+      - name: Build Debian Trixie Docker Image
+        run: |
+
+          echo "Building Docker image with Debian Trixie"
+          podman build \
+            -f Dockerfile.debian \
+            -t github-actions-riscv:debian-${VERSION} \
+            .
+      - name: Push Debian Trixie Docker Image
+        run: |
+
+          podman tag localhost/github-actions-riscv:debian-${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-debian-${VERSION}
+
+          # Login to Docker Hub
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-debian-${VERSION}
           
       
       - name: Cleanup local images and containers
@@ -70,5 +64,3 @@ jobs:
 
           # Remove all local images built for this runner
           podman images -q github-actions-riscv | xargs -r podman rmi -f
-
-          
