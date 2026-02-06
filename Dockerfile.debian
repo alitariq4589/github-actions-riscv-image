@@ -31,6 +31,4 @@ RUN echo "runneruser ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/runneruser
 USER runneruser
 
 
-
-
 ENTRYPOINT ["./entrypoint.sh"]
