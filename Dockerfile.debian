@@ -1,4 +1,4 @@
-FROM docker.io/riscv64/debian:trixie
+FROM docker.io/debian:latest
 
 RUN apt-get update && apt-get install -y libatomic1 docker.io curl git ca-certificates libicu-dev sudo
 
@@ -8,8 +8,8 @@ WORKDIR /home/runner
 
 
 # Download GitHub runner (replace URL with the latest for your architecture)
-RUN curl -O -L https://github.com/alitariq4589/github-runner-riscv/releases/download/v2.329.0_riscv/actions-runner-linux-riscv64-2.329.0.tar.gz && \
-    tar xzf actions-runner-linux-riscv64-2.329.0.tar.gz && rm actions-runner-linux-riscv64-2.329.0.tar.gz
+RUN curl -O -L https://github.com/alitariq4589/github-runner-riscv/releases/download/v2.331.0-riscv64-net8/actions-runner-linux-riscv64-2.331.0.tar.gz && \
+    tar xzf actions-runner-linux-riscv64-2.331.0.tar.gz && rm actions-runner-linux-riscv64-2.331.0.tar.gz
 
 # Install dependencies for the runner (if any)
 RUN bash ./bin/installdependencies.sh
@@ -29,8 +29,6 @@ RUN chown -R runneruser:runneruser /home/runner
 RUN echo "runneruser ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/runneruser
 
 USER runneruser
-
-
 
 
 ENTRYPOINT ["./entrypoint.sh"]
