@@ -4,6 +4,11 @@ This repository is for build and sending the images of GitHub actions to dockerh
 
 The source code for github actions runner for RISC-V: https://github.com/alitariq4589/github-runner-riscv
 
+## Directory Structure
+
+- `docker-in-docker` directory contains the files for image which can be used to run docker container of the runner with support for running docker container inside it (useful for running CIs which further spin docker containers)
+- `unprivileged` directory contains the files for image which spin unprivileged container running github runner image (useful for security)
+
 ## How to use this image
 
 If you would like to use this image for docker/podman directly, use the following command on a RISC-V linux compute machine.
@@ -21,7 +26,7 @@ podman run -d \
 
 The `<YOUR_REPO_URL>` and `<YOUR_REPO_RUNNER_TOKEN>` can be obtained from your repository settings under `Settings > Actions > Runner > New self-hosted runner`
 
-If you would like to use docker in docker support, you can fetch the image from tag `docker-ubuntu-latest` and use following command. This spawns new containers using the host container sockets and is ideal for using docker in docker with full cpu usage.
+If you would like to use docker in docker support, you can fetch the image from tag `docker-latest` and use following command. This spins new container using the host container sockets and is ideal for using docker in docker with full cpu usage.
 
 ```shell
 docker run -d \

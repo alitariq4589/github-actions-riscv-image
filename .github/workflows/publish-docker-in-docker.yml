@@ -20,19 +20,18 @@ jobs:
 
       - name: Build Ubuntu latest Docker Image
         run: |
-
+          cd docker-in-docker
           echo "Building Docker image with Ubuntu LTS"
           podman build \
             -f Dockerfile.ubuntu \
-            -t github-actions-riscv:ubuntu-${VERSION} \
+            -t github-actions-riscv:docker-ubuntu-${VERSION} \
             .
         
       - name: Push Ubuntu latest Docker Image
         run: |
-          
           # Tag ubuntu image
-          podman tag localhost/github-actions-riscv:ubuntu-${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-ubuntu-${VERSION}
-          podman tag localhost/github-actions-riscv:ubuntu-${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-latest
+          podman tag localhost/github-actions-riscv:docker-ubuntu-${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-ubuntu-${VERSION}
+          podman tag localhost/github-actions-riscv:docker-ubuntu-${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-latest
 
           # Login to Docker Hub
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
@@ -46,12 +45,12 @@ jobs:
           echo "Building Docker image with Debian Trixie"
           podman build \
             -f Dockerfile.debian \
-            -t github-actions-riscv:debian-${VERSION} \
+            -t github-actions-riscv:docker-debian-${VERSION} \
             .
       - name: Push Debian Trixie Docker Image
         run: |
-
-          podman tag localhost/github-actions-riscv:debian-${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-debian-${VERSION}
+          cd docker-in-docker
+          podman tag localhost/github-actions-riscv:docker-debian-${VERSION} docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-debian-${VERSION}
 
           # Login to Docker Hub
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | podman login docker.io -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
