@@ -39,7 +39,7 @@ jobs:
 
           # Push all tags
           podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-ubuntu-${VERSION}
-          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-latest-${VERSION}
+          podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:docker-latest
       - name: Build Debian Trixie Docker Image
         run: |
 
