@@ -1,4 +1,4 @@
-name: Build and Release Github Actions Image
+name: Build and Release Unprivileged Github Actions Image
 
 permissions:
   contents: write
@@ -20,7 +20,7 @@ jobs:
 
       - name: Build Ubuntu latest Docker Image
         run: |
-
+          cd unprivileged
           echo "Building Docker image with Ubuntu LTS"
           podman build \
             -f Dockerfile.ubuntu \
@@ -42,7 +42,7 @@ jobs:
           podman push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/github-actions-riscv:latest
       - name: Build Debian Trixie Docker Image
         run: |
-
+          cd unprivileged
           echo "Building Docker image with Debian Trixie"
           podman build \
             -f Dockerfile.debian \
